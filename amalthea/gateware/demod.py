@@ -36,12 +36,12 @@ class CORDICDemod(Elaboratable):
     def elaborate(self, platform):
         m = Module()
 
-
         # Make the intermediate stages 1-bit wider to account for CORDIC gain.
         stages = [IQ(self._sample_depth+1)           for i in range(self._iterations)]
         phases = [Signal(signed(self._sample_depth)) for i in range(self._iterations)]
         valid  = [Signal()                           for i in range(self._iterations)]
 
+        m.d.comb += self.input.ready.eq(1)
         m.d.sync += valid[0].eq(self.input.valid)
         for i in range(0, self._iterations-1):
             m.d.sync += valid[i+1].eq(valid[i])

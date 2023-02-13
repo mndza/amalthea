@@ -4,9 +4,9 @@ category: '[Amalthea]'
 
 templates:
   imports: |-
-      import amalthea
+      from amalthea.gateware.demod import CORDICDemod
   make: |
-      self.amalthea_device.add_block("${id}", amalthea.gateware.demod.CORDICDemod(13))
+      self.amalthea_device.add_block("${id}", CORDICDemod(16))
 
 inputs:
 - domain: hybridsdr

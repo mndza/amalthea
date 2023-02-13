@@ -1,0 +1,27 @@
+id: amalthea_device
+label: Amalthea Simulator
+flags: [ show_id, python ]
+category: '[Amalthea]'
+
+parameters:
+- id: write_vcd
+  label: Write VCD
+  dtype: bool
+  default: 'False'
+  options: ['True', 'False']
+  option_labels: ['Yes', 'No']
+- id: vcd_path
+  label: Output file
+  dtype: string
+  default: ''
+  hide: ${ 'none' if write_vcd else 'all' }
+
+templates:
+  imports: |-
+      from amalthea.gateware.simulator import Simulator as AmaltheaSimulator
+  var_make: |-
+      self.amalthea_device = AmaltheaSimulator(${vcd_path if write_vcd == 'True' else None})
+
+value: ${ 'Amalthea Simulator' }
+
+file_format: 1
