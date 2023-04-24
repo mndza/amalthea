@@ -54,6 +54,7 @@ class AmaltheaSource(gr.sync_block):
 
         self.buffer = np.array([], dtype=np.float32)
 
+    def usb_setup(self):
         self.context = usb1.USBContext()
 
         # Poll for device availablility.
@@ -76,6 +77,7 @@ class AmaltheaSource(gr.sync_block):
 
 
     def start(self):
+        self.usb_setup()
         # Submit a set of transfers to perform async comms with.
         self.active_transfers = []
         for _ in range(TRANSFER_QUEUE_DEPTH):
@@ -86,7 +88,6 @@ class AmaltheaSource(gr.sync_block):
 
             # ... and store it.
             self.active_transfers.append(transfer)
-
 
         # Submit our transfers all at once.
         for transfer in self.active_transfers:
@@ -138,12 +139,10 @@ class AmaltheaSource(gr.sync_block):
         return sample_count
 
     def stop(self):
-        # Cancel all of our active transfers.
-        for transfer in self.active_transfers:
-            if transfer.isSubmitted():
-                transfer.cancel()
+        # Deleting USB context cancels all active transfers
+        del self.context
         return True
-
+        
     def write_reg(self, reg, value):
         self.device.controlWrite(usb1.REQUEST_TYPE_VENDOR, 0, reg, value, [])
 
