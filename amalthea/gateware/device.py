@@ -125,8 +125,13 @@ class Device(Elaboratable):
     def connect_usb(self, source, sink):
         print(f"connect_usb {source}")
         block_id, output_id = source
-        self._usb_outputs.append(self._blocks[block_id].outputs[output_id])
-        self._usb_connections.append((len(self._usb_outputs)-1, sink))
+        stream = self._blocks[block_id].outputs[output_id]
+        if stream not in self._usb_outputs:
+            self._usb_outputs.append(stream)
+            idx = len(self._usb_outputs) - 1
+        else:
+            idx = self._usb_outputs.index(stream)
+        self._usb_connections.append((idx, sink))
 
     def flash(self):
         platform = get_appropriate_platform()
